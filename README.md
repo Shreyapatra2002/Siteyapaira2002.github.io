@@ -1,4 +1,4 @@
-# Dice-Game-
+
 # 🎲 Pastel Dice Game
 
 A beautiful, feature-rich dice rolling game with stunning 3D visuals, multiple game modes, and extensive customization.
