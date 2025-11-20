@@ -32,4 +32,5 @@ A beautiful, feature-rich dice rolling game with stunning 3D visuals, multiple g
 - `script.js` - Game logic and functionality
 
 ## 🌐 Live Demo
-[Add your GitHub Pages link here after deployment]
+https://shreyapatra2002.github.io/Dice-Game/
+
