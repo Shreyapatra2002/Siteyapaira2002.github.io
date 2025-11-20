@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pastel Dice Game</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Ambient Glow Orbs -->
+    <div class="glow-orb" id="glowOrb1"></div>
+    <div class="glow-orb" id="glowOrb2"></div>
+    <div class="glow-orb" id="glowOrb3"></div>
+    
+    <!-- Floating background elements -->
+    <div class="floating-bg bg-1"></div>
+    <div class="floating-bg bg-2"></div>
+    <div class="floating-bg bg-3"></div>
+    <div class="floating-bg bg-4"></div>
+
+    <div id="container">
+        <!-- Hamburger Menu -->
+        <div class="hamburger-menu" id="hamburgerMenu">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+
+        <!-- Menu Overlay -->
+        <div class="menu-overlay" id="menuOverlay">
+            <div class="menu-item" id="menuSound">
+                <div class="menu-icon">🔊</div>
+                <div class="menu-text">Sound: On</div>
+            </div>
+            <div class="menu-item" id="menuDarkMode">
+                <div class="menu-icon">🌙</div>
+                <div class="menu-text">Dark Mode</div>
+            </div>
+            <div class="menu-item" id="menuSkins">
+                <div class="menu-icon">🎨</div>
+                <div class="menu-text">Dice Skins</div>
+            </div>
+            <div class="menu-item" id="menuLeaderboard">
+                <div class="menu-icon">🏆</div>
+                <div class="menu-text">Leaderboard</div>
+            </div>
+            <div class="menu-item" id="menuStats">
+                <div class="menu-icon">📊</div>
+                <div class="menu-text">Statistics</div>
+            </div>
+            <div class="menu-item" id="menuTutorial">
+                <div class="menu-icon">🎓</div>
+                <div class="menu-text">Tutorial</div>
+            </div>
+            <div class="menu-item" id="menuAccessibility">
+                <div class="menu-icon">♿</div>
+                <div class="menu-text">Accessibility</div>
+            </div>
+            <div class="menu-item menu-close" id="menuClose">
+                <div class="menu-icon">✕</div>
+                <div class="menu-text">Close Menu</div>
+            </div>
+        </div>
+        
+        <h1>🎲 Dice Game 🎲</h1>
+        
+        <div class="game-description">
+            Roll the beautiful 3D dice and reach the target score within your attempts! Now with multiplayer, progression, and multiple game modes!
+        </div>
+        
+        <!-- Progression System Display -->
+        <div id="progressionContainer">
+            <div class="info-box">
+                <div class="info-label">Player Level</div>
+                <div class="info-value">1 <span class="level-badge">Novice</span></div>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="xpBar" style="width: 0%"></div>
+            </div>
+            <div style="text-align: center; font-size: 0.8rem; color: var(--text-muted);">
+                <span id="currentXP">0</span>/<span id="nextLevelXP">100</span> XP
+            </div>
+        </div>
+        
+        <div class="game-info">
+            <div class="info-box">
+                <div class="info-label">Target Score</div>
+                <div class="info-value" id="targetScore">25</div>
+            </div>
+            <div class="info-box attempts-box">
+                <div class="info-label">Attempts Left</div>
+                <div class="info-value" id="attemptsLeft">4</div>
+            </div>
+            <div class="info-box">
+                <div class="info-label">Wins</div>
+                <div class="info-value" id="winsCount">0</div>
+            </div>
+            <div class="info-box">
+                <div class="info-label">Win Streak</div>
+                <div class="info-value" id="streakCount">0</div>
+            </div>
+            <div class="info-box challenge-box">
+                <div class="info-label">Challenge</div>
+                <div class="info-value" id="challengeStatus">Ready!</div>
+            </div>
+            <div class="info-box combo-box">
+                <div class="info-label">Combo</div>
+                <div class="info-value" id="comboStatus">1x</div>
+            </div>
+        </div>
+        
+        <!-- Multiplayer Panel -->
+        <div class="multiplayer-panel" id="multiplayerPanel" style="display: none;">
+            <h3>🎪 Multiplayer Mode</h3>
+            <div id="roomInfo">
+                <div>Room Code: <span class="room-code" id="roomCode">-----</span></div>
+                <button id="copyRoomCode" style="margin-left: 10px;">Copy</button>
+            </div>
+            <div>
+                <h4>Players in Room:</h4>
+                <ul class="player-list" id="playerList">
+                    <!-- Players will be added here -->
+                </ul>
+            </div>
+            <div>
+                <h4>Chat:</h4>
+                <div class="chat-container" id="chatContainer">
+                    <!-- Chat messages will be added here -->
+                </div>
+                <input type="text" id="chatInput" placeholder="Type a message..." style="width: 70%;">
+                <button id="sendChat">Send</button>
+            </div>
+        </div>
+        
+        <div class="game-controls">
+            <div class="control-row">
+                <div class="control-group">
+                    <label for="gameMode">Game Mode</label>
+                    <select id="gameMode">
+                        <option value="solo">Solo Play</option>
+                        <option value="pvc">Player vs Computer</option>
+                        <option value="multiplayer">Multiplayer (2-4 Players)</option>
+                        <option value="boss">Boss Battle</option>
+                        <option value="timeAttack">Time Attack</option>
+                        <option value="puzzle">Puzzle Mode</option>
+                        <option value="tournament">Tournament Mode</option>
+                        <option value="daily">Daily Challenge</option>
+                    </select>
+                </div>
+                
+                <div class="control-group">
+                    <label for="numOfDice">Number of Dice</label>
+                    <input type="number" value="2" min="1" max="6" id="numOfDice">
+                </div>
+                
+                <!-- Added difficulty selector -->
+                <div class="control-group">
+                    <label for="difficulty">Difficulty</label>
+                    <select id="difficulty">
+                        <option value="easy">Easy</option>
+                        <option value="medium" selected>Medium</option>
+                        <option value="hard">Hard</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="button-group">
+                <button class="roll-btn" id="rollButton">Roll Dice!</button>
+                <button class="reset-btn" id="resetButton">Reset</button>
+                <button class="challenge-btn" id="challengeButton">Lucky Challenge!</button>
+            </div>
+        </div>
+        
+        <div id="diceResult">Ready to roll! Roll 25 or higher to win!</div>
+        
+        <div id="diceContainer">
+            <!-- Dice will appear here -->
+        </div>
+
+        <div class="history-container">
+            <div class="history-title">🎲 Roll History</div>
+            <ul id="rollHistory"></ul>
+        </div>
+        
+        <!-- Accessibility Panel -->
+        <div class="accessibility-panel" id="accessibilityPanel" style="display: none;">
+            <h3>♿ Accessibility Options</h3>
+            <div class="accessibility-option">
+                <span>High Contrast Mode</span>
+                <input type="checkbox" id="highContrastToggle">
+            </div>
+            <div class="accessibility-option">
+                <span>Larger Text</span>
+                <input type="checkbox" id="largeTextToggle">
+            </div>
+            <div class="accessibility-option">
+                <span>Reduced Motion</span>
+                <input type="checkbox" id="reducedMotionToggle">
+            </div>
+            <div class="accessibility-option">
+                <span>Colorblind Mode</span>
+                <input type="checkbox" id="colorblindToggle">
+            </div>
+        </div>
+    </div>
+
+    <!-- Achievement Notification -->
+    <div class="achievement" id="achievement">
+        <div class="achievement-title">🎯 Achievement Unlocked!</div>
+        <div class="achievement-text" id="achievementText">First Roll!</div>
+    </div>
+
+    <!-- Leaderboard Modal -->
+    <div class="modal" id="leaderboardModal">
+        <div class="modal-content">
+            <h2>🏆 Leaderboard</h2>
+            <div class="leaderboard-list" id="leaderboardList">
+                <!-- Leaderboard items will be added here -->
+            </div>
+            <button onclick="closeModal('leaderboardModal')" style="margin-top: 20px; width: 100%;">Close</button>
+        </div>
+    </div>
+
+    <!-- Skins Modal -->
+    <div class="modal" id="skinsModal">
+        <div class="modal-content">
+            <h2>🎨 Dice Skins</h2>
+            <div class="skin-grid" id="skinGrid">
+                <!-- Skin items will be added here -->
+            </div>
+            <button onclick="closeModal('skinsModal')" style="margin-top: 20px; width: 100%;">Close</button>
+        </div>
+    </div>
+
+    <!-- Statistics Dashboard Modal -->
+    <div class="modal" id="statsModal">
+        <div class="modal-content">
+            <h2>📊 Game Statistics</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value" id="totalGames">0</div>
+                    <div class="stat-label">Total Games</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="winRate">0%</div>
+                    <div class="stat-label">Win Rate</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="avgScore">0</div>
+                    <div class="stat-label">Average Score</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="bestStreak">0</div>
+                    <div class="stat-label">Best Streak</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="totalRolls">0</div>
+                    <div class="stat-label">Total Rolls</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="perfectRolls">0</div>
+                    <div class="stat-label">Perfect Rolls</div>
+                </div>
+            </div>
+            <h3 style="margin-top: 20px;">Most Common Rolls</h3>
+            <div id="rollFrequency">
+                <!-- Roll frequency will be added here -->
+            </div>
+            <button onclick="closeModal('statsModal')" style="margin-top: 20px; width: 100%;">Close</button>
+        </div>
+    </div>
+    
+    <!-- Tutorial Overlay -->
+    <div class="tutorial-overlay" id="tutorialOverlay" style="display: none;">
+        <div class="tutorial-card">
+            <h2>🎓 How to Play</h2>
+            <div id="tutorialContent">
+                <!-- Tutorial content will be added here -->
+            </div>
+            <div class="tutorial-navigation">
+                <button id="prevTutorial">Previous</button>
+                <span id="tutorialStep">1/5</span>
+                <button id="nextTutorial">Next</button>
+            </div>
+            <button id="skipTutorial" style="margin-top: 10px;">Skip Tutorial</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
